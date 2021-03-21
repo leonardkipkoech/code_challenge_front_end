@@ -32,12 +32,60 @@ const routes = [
     path: '/supplier-products',
     name: 'supplier-products',
     component: () => import(/* webpackChunkName: "about" */ '../views/Supplier_products.vue')
+  },
+  {
+    path: '/progress',
+    name: 'progress',
+    component: () => import(/* webpackChunkName: "about" */ '../views/progress.vue')
+  },
+  {
+    path: '/orders_edit',
+    name: 'orders_edit',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Orders_edit.vue')
+  },
+  {
+    path: '/edit_Order_detail',
+    name: 'edit_Order_detail',
+    component: () => import(/* webpackChunkName: "about" */ '../views/edit_Order_detail.vue')
+  },
+  {
+    path: '/edit_Product',
+    name: 'edit_Product',
+    component: () => import(/* webpackChunkName: "about" */ '../views/edit_Product.vue')
+  },
+  {
+    path: '/edit_Supplier_product',
+    name: 'edit_Supplier_product',
+    component: () => import(/* webpackChunkName: "about" */ '../views/edit_Supplier_product.vue')
+  },
+  {
+    path: '/edit_Supplier',
+    name: 'edit_Supplier',
+    component: () => import(/* webpackChunkName: "about" */ '../views/edit_Supplier.vue')
+  },
+  {
+    path: '/App_key_error',
+    name: 'App_key_error',
+    component: () => import(/* webpackChunkName: "about" */ '../views/App_key_error.vue')
   }
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
+  methods: {
+        clickProgress(){
+          //alert("yes");
+          var elem = this.$refs.myBtn;
+          elem.click();
+        },
+        testFunc(){
+          alert("yes");
+          var elem = this.$refs.myBtn;
+          elem.click();
+        }    
+  }
 })
 
 export default router
+

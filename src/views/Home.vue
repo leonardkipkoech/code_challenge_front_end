@@ -2,8 +2,7 @@
   <div class="home animated zoomIn">
     <!--<img alt="Vue logo" src="../assets/logo.png">-->
     <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
-    <h1>Laravel vuejs</h1>
-    <h1>Code challenge</h1>
+    <h1>API KEY FOR ALL CRUD IS: 123</h1>
   </div>
 </template>
 

@@ -7,7 +7,7 @@
 	<div class="row">
 	 <form>
 	  <div class="form-group">
-	    <input type="text" class="form-control input-lg" placeholder="Enter your API Key">
+	    <input v-model="app_object.app_key" type="text" class="form-control input-lg" placeholder="Enter your API Key">
 	  </div>
 	  <div class="form-group">
 	    <input v-model="supplier.name" type="text" class="form-control input-lg" placeholder="Enter supplier name">
@@ -24,19 +24,25 @@
 	 <br>
 	 <p align="left">Fetch suppliers</p>
 	  <div class="form-group">
-	    <input type="text" class="form-control input-lg" placeholder="Enter your API Key">
+	    <input v-model="app_object.app_key" type="text" class="form-control input-lg" placeholder="Enter your API Key">
 	  </div>
 	  <div class="form-group">
-	  	<button type="button" class="btn btn-lg btn-primary pull-left">Fetch</button>
+	  	<button @click="getSupplier_List();" type="button" class="btn btn-lg btn-primary pull-left">Fetch</button>
 	  </div>
 	</form> 
-	<table class="table">
+	<table class="table" style="border-style: solid; border-color: transparent;">
 	    <tbody>
 			<tr class="Success">
-				<td>id</td>
-				<td>Order number</td>
+				<td><p>Supplier name</p></td>
+				<td><p>Action</p></td>
+				<td><p>Action</p></td>
 			</tr>
 		</tbody>
+		<tr v-for="(supplierss, index) in suppliers_list.suppliers_array" :key="index">
+			<td><p>{{supplierss.name}}</p></td>
+			<td><button @click="deleteSupplier(supplierss.id)">Delete</button></td>
+			<td><button @click="editSupplier(supplierss.id)">Update</button></td>
+		</tr>
 	</table>		
 	</div>
 <!--End Fetch suppliers-->
@@ -48,23 +54,78 @@
 		export default {
 			methods: {
 				supplierSubmit(){
+					this.$router.push('progress');
 					axios.post('http://127.0.0.1:8000/api/suppliers/store', {
 						supplier: this.supplier
+					},
+					{
+						headers: {
+						    APP_KEY: this.app_object.app_key
+						}
 					})
 					.then(response=>{
 						if (response.status==201) {
 							this.supplier.name=""
+							this.$router.push('suppliers');
 						}
 					})
 					.catch(error=>{
+						if (error=='Error: Request failed with status code 401') {
+							this.$router.push('App_key_error');
+						}
 						console.log(error)
 					})
+				},
+				getSupplier_List(){
+				 	//this.$router.push('progress');
+					axios.get('http://127.0.0.1:8000/api/suppliers',{
+					headers: {
+					    APP_KEY: this.app_object.app_key
+					}
+				})
+					.then(response=>{
+						this.suppliers_list.suppliers_array=response.data;
+					})
+					.catch(error=>{
+						if (error=='Error: Request failed with status code 401') {
+							this.$router.push('App_key_error');
+						}
+						console.log(error)
+					})
+				 },
+				 deleteSupplier(id){
+					axios.delete('http://127.0.0.1:8000/api/suppliers/'+id,
+					{
+						headers: {
+						    APP_KEY: this.app_object.app_key
+						}
+					})
+					.then(response=>{
+						if (response.status==200) {
+						}
+					})
+					.catch(error=>{
+						if (error=='Error: Request failed with status code 401') {
+							this.$router.push('App_key_error');
+						}
+						console.log(error)
+					})
+				},
+				editSupplier(id){
+				 	//this.$emit('editorder-event');
+				 	this.$router.push({name: 'edit_Supplier', params: {id: id}});
 				}
 			},
 			data: function(){
 				return {
 					supplier: {
-						name: "default name"
+						name: ""
+					},
+					suppliers_list: {
+						suppliers_array: []					
+					},
+					app_object: {
+					app_key: ""
 					}
 				}
 			}
