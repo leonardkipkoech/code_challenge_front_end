@@ -28,6 +28,9 @@
 	  </div>
 	  <div class="form-group">
 	  	<button @click="getSupplier_List();" type="button" class="btn btn-lg btn-primary pull-left">Fetch</button>
+	  	<span v-if="app_object.isHidden" style="color: white; font-size: 2em;">
+	  		{{app_object.progress_display}}
+	  	</span>
 	  </div>
 	</form> 
 	<table class="table" style="border-style: solid; border-color: transparent;">
@@ -77,7 +80,8 @@
 					})
 				},
 				getSupplier_List(){
-				 	//this.$router.push('progress');
+				 	this.app_object.progress_display="Fetching. Please wait...";
+				 	this.app_object.isHidden=true;
 					axios.get('http://127.0.0.1:8000/api/suppliers',{
 					headers: {
 					    APP_KEY: this.app_object.app_key
@@ -85,6 +89,7 @@
 				})
 					.then(response=>{
 						this.suppliers_list.suppliers_array=response.data;
+						this.app_object.isHidden=false;
 					})
 					.catch(error=>{
 						if (error=='Error: Request failed with status code 401') {
@@ -94,6 +99,8 @@
 					})
 				 },
 				 deleteSupplier(id){
+				 	this.app_object.progress_display="Please wait. Deleting...";
+				 	this.app_object.isHidden=true;
 					axios.delete('http://127.0.0.1:8000/api/suppliers/'+id,
 					{
 						headers: {
@@ -102,6 +109,8 @@
 					})
 					.then(response=>{
 						if (response.status==200) {
+						 	this.app_object.isHidden=false;
+						 	this.getSupplier_List();
 						}
 					})
 					.catch(error=>{
@@ -125,7 +134,9 @@
 						suppliers_array: []					
 					},
 					app_object: {
-					app_key: ""
+						app_key: "",
+						isHidden: false,
+						progress_display: ""
 					}
 				}
 			}

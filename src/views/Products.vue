@@ -33,6 +33,9 @@
 	  </div>
 	  <div class="form-group">
 	  	<button @click="getProduct_List();" type="button" class="btn btn-lg btn-primary pull-left">Fetch</button>
+	  	<span v-if="app_object.isHidden" style="color: white; font-size: 2em;">
+	  		{{app_object.progress_display}}
+	  	</span>
 	  </div>
 	</form> 
 	<table class="table" style="border-style: solid; border-color: transparent;">
@@ -89,7 +92,8 @@ import axios from 'axios'
 				})
 			},
 			 getProduct_List(){
-			 	//this.$router.push('progress');
+			 	this.app_object.progress_display="Fetching. Please wait...";
+			 	this.app_object.isHidden=true;
 				axios.get('http://127.0.0.1:8000/api/products',{
 					headers: {
 					    APP_KEY: this.app_object.app_key
@@ -97,13 +101,15 @@ import axios from 'axios'
 				})
 				.then(response=>{
 					this.products_list.products_array=response.data;
-					//this.$router.push('Orders');
+					this.app_object.isHidden=false;
 				})
 				.catch(error=>{
 					console.log(error);
 				})
 			 },
 			deleteProduct(id){
+			 	this.app_object.progress_display="Please wait. Deleting...";
+			 	this.app_object.isHidden=true;
 				axios.delete('http://127.0.0.1:8000/api/products/'+id,
 				{
 					headers: {
@@ -112,7 +118,8 @@ import axios from 'axios'
 				})
 				.then(response=>{
 					if (response.status==200) {
-						//this.$emit('itemChanged');
+					 	this.app_object.isHidden=false;
+					 	this.getProduct_List();
 					}
 				})
 				.catch(error=>{
@@ -138,7 +145,9 @@ import axios from 'axios'
 					products_array: []					
 				},
 				app_object: {
-					app_key: ""
+					app_key: "",
+					isHidden: false,
+					progress_display: ""
 				}
 			}
 		}

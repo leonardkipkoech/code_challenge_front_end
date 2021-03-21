@@ -28,6 +28,9 @@
 	  </div>
 	  <div class="form-group">
 	  	<button @click="getOrderList();" type="button" class="btn btn-lg btn-primary pull-left">Fetch</button>
+	  	<span v-if="app_object.isHidden" style="color: white; font-size: 2em;">
+	  		{{app_object.progress_display}}
+	  	</span>
 	  </div>
 	</form> 
 	<table class="table" style="border-style: solid; border-color: transparent;">
@@ -54,7 +57,7 @@
 
 <script>
 import axios from 'axios'
-
+	
 	export default {
 		components: {
 		},
@@ -64,7 +67,8 @@ import axios from 'axios'
 			 	this.$router.push({name: 'orders_edit', params: {id: order_id}});
 			 },
 			 getOrderList(){
-			 	//this.$router.push('progress');
+			 	this.app_object.progress_display="Fetching. Please wait...";
+			 	this.app_object.isHidden=true;
 				axios.get('http://127.0.0.1:8000/api/orders',{
 					headers: {
 					    APP_KEY: this.app_object.app_key
@@ -72,6 +76,7 @@ import axios from 'axios'
 				})
 				.then(response=>{
 					this.dalist.orderList=response.data;
+					this.app_object.isHidden=false;
 				})
 				.catch(error=>{
 					if (error=='Error: Request failed with status code 401') {
@@ -105,6 +110,8 @@ import axios from 'axios'
 				})
 			},
 			deleteOrder(daid){
+			 	this.app_object.progress_display="Please wait. Deleting...";
+			 	this.app_object.isHidden=true;
 				axios.delete('http://127.0.0.1:8000/api/orders/'+daid,
 				{
 					headers: {
@@ -113,7 +120,8 @@ import axios from 'axios'
 				})
 				.then(response=>{
 					if (response.status==200) {
-						this.$emit('itemChanged');
+				 	this.app_object.isHidden=false;
+				 	this.getOrderList();
 					}
 				})
 				.catch(error=>{
@@ -133,7 +141,9 @@ import axios from 'axios'
 					orderList: []					
 				},
 				app_object: {
-					app_key: ""
+					app_key: "",
+					isHidden: false,
+					progress_display: ""
 				}
 			}
 		}
